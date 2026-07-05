@@ -126,13 +126,13 @@ function showExplanation(q) {
     const box = document.getElementById('explanation-box');
     box.classList.remove('hidden');
     document.getElementById('exp-correct').innerText = q.correctOption;
-    document.getElementById('exp-detail').innerText = q.explanation;
-    document.getElementById('exp-ncert').innerText = q.ncertLine;
-    document.getElementById('exp-wrong').innerText = q.whyOthersWrong;
-    document.getElementById('exp-trick').innerText = q.memoryTrick;
-    document.getElementById('exp-mistake').innerText = q.commonMistake;
-    document.getElementById('exp-pyq').innerText = q.pyqSimilarity;
-    document.getElementById('exp-prob').innerText = q.neetProbability;
+    document.getElementById('exp-detail').innerText = q.explanation || "N/A";
+    document.getElementById('exp-ncert').innerText = q.ncertLine || "N/A";
+    document.getElementById('exp-wrong').innerText = q.whyOthersWrong || "N/A";
+    document.getElementById('exp-trick').innerText = q.memoryTrick || "N/A";
+    document.getElementById('exp-mistake').innerText = q.commonMistake || "N/A";
+    document.getElementById('exp-pyq').innerText = q.pyqSimilarity || "N/A";
+    document.getElementById('exp-prob').innerText = q.neetProbability || "N/A";
 }
 
 // Navigation Controls
@@ -192,10 +192,12 @@ function generatePalette() {
 function updatePalette() {
     currentQuestions.forEach(q => {
         const btn = document.getElementById(`pal-${q.id}`);
-        btn.className = 'pal-btn';
-        if (markedForReview.has(q.id)) btn.classList.add('review');
-        else if (userAnswers[q.id]) btn.classList.add('answered');
-        else if (userAnswers[q.id] === null) btn.classList.add('skipped');
+        if (btn) {
+            btn.className = 'pal-btn';
+            if (markedForReview.has(q.id)) btn.classList.add('review');
+            else if (userAnswers[q.id]) btn.classList.add('answered');
+            else if (userAnswers[q.id] === null) btn.classList.add('skipped');
+        }
     });
 }
 
@@ -245,7 +247,7 @@ function calculateResults() {
     document.getElementById('total-score').innerText = score;
     document.getElementById('max-score').innerText = maxScore;
     
-    // Naive AIR prediction based on percentage
+    // AIR prediction based on percentage
     const percent = (score / maxScore) * 100;
     let air = "> 1,00,000";
     if(percent > 95) air = "1 - 500";
