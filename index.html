@@ -1,97 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEET 2027 Chemistry Quiz - PWA</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEET 2027 Chemistry Quiz</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
-<body>
-    <header class="app-header">
-        <div class="logo">NEET 2027 Pro</div>
-        <div class="controls">
-            <button id="theme-toggle">Toggle Dark Mode</button>
-            <div id="timer" class="timer">00:00:00</div>
-            <button id="submit-quiz-btn" class="danger-btn">Submit Test</button>
-        </div>
-    </header>
-    <main id="app-container">
-        <section id="dashboard-view" class="view active">
-            <h1>Class 11: Some Basic Concepts of Chemistry</h1>
-            <h2>Topic: Development & Importance of Chemistry</h2>
-            <div class="test-options">
-                <button onclick="startTest('practice')" class="primary-btn">Practice Mode</button>
-                <button onclick="startTest('mock')" class="primary-btn">Mock Test (Timed)</button>
-            </div>
-            <div id="install-banner" class="hidden">
-                <p>Install this app for offline use</p>
-                <button id="install-btn">Install PWA</button>
-            </div>
-        </section>
-        <section id="quiz-view" class="view">
-            <div class="quiz-layout">
-                <div class="question-area">
-                    <div class="question-header">
-                        <span id="q-number" class="badge">Question 1</span>
-                        <span id="q-difficulty" class="badge diff-medium">Medium</span>
-                        <div class="actions">
-                            <button id="bookmark-btn">🔖 Bookmark</button>
-                            <button id="mark-review-btn">⚠️ Mark for Review</button>
-                        </div>
-                    </div>
-                    <div id="question-text" class="question-text"></div>
-                    <div id="options-container" class="options-grid"></div>
-                    <div id="explanation-box" class="explanation-box hidden">
-                        <h3>Detailed Analysis</h3>
-                        <p><strong>Correct Answer:</strong> <span id="exp-correct"></span></p>
-                        <p><strong>Explanation:</strong> <span id="exp-detail"></span></p>
-                        <p><strong>NCERT Line:</strong> <span id="exp-ncert"></span></p>
-                        <p><strong>Why Others Are Wrong:</strong> <span id="exp-wrong"></span></p>
-                        <p><strong>Memory Trick:</strong> <span id="exp-trick"></span></p>
-                        <p><strong>Common Mistake:</strong> <span id="exp-mistake"></span></p>
-                        <p class="stats">PYQ Sim: <span id="exp-pyq"></span> | NEET Prob: <span id="exp-prob"></span></p>
-                    </div>
-                    <div class="navigation-buttons">
-                        <button id="prev-btn">Previous</button>
-                        <button id="skip-btn">Skip</button>
-                        <button id="next-btn" class="primary-btn">Save & Next</button>
-                    </div>
-                </div>
-                <div class="palette-area">
-                    <h3>Question Palette</h3>
-                    <div class="palette-stats">
-                        <span class="stat-badge answered">Answered</span>
-                        <span class="stat-badge review">Review</span>
-                        <span class="stat-badge unvisited">Not Visited</span>
-                    </div>
-                    <div id="question-palette" class="palette-grid"></div>
-                </div>
-            </div>
-        </section>
-        <section id="results-view" class="view">
-            <h1>Test Analysis Report</h1>
-            <div class="results-summary">
-                <div class="score-card">
-                    <h2 id="total-score">0</h2>
-                    <p>Total Score out of <span id="max-score">0</span></p>
-                    <p>Predicted AIR Rank: <strong id="air-pred"></strong></p>
-                </div>
-            </div>
-            <div class="charts-container">
-                <div class="chart-box"><canvas id="accuracyChart"></canvas></div>
-                <div class="chart-box"><canvas id="topicChart"></canvas></div>
-            </div>
-            <div class="actions center">
-                <button onclick="exportPDF()" class="primary-btn">Export PDF Report</button>
-                <button onclick="exportCSV()" class="primary-btn">Export CSV</button>
-                <button onclick="retryWrong()" class="primary-btn">Retry Wrong Questions</button>
-                <button onclick="location.reload()" class="primary-btn">Return Home</button>
-            </div>
-        </section>
-    </main>
-    <script src="questions.js"></script>
-    <script src="script.js"></script>
+<body data-theme="light">
+  <header>
+    <h2>NEET 2027 Chem: Basic Concepts</h2>
+    <div>
+      <span id="timer">00:00</span>
+      <button onclick="toggleTheme()" style="margin-left:15px; cursor:pointer;">Toggle Theme</button>
+    </div>
+  </header>
+  
+  <div class="container" id="quiz-screen">
+    <div class="main-content">
+      <div id="q-header"><h3>Question <span id="q-num">1</span> of 40</h3></div>
+      <div id="question-text" style="font-size: 1.2em; font-weight: bold; margin-bottom: 20px;"></div>
+      <div class="options" id="options-container"></div>
+      
+      <div class="controls">
+        <button onclick="prevQuestion()">Previous</button>
+        <button onclick="markReview()">Mark for Review & Next</button>
+        <button onclick="clearResponse()">Clear Response</button>
+        <button onclick="nextQuestion()">Save & Next</button>
+      </div>
+
+      <div class="explanation" id="explanation-box"></div>
+    </div>
+    
+    <div class="sidebar">
+      <h3>Question Palette</h3>
+      <div style="font-size: 12px; margin-bottom: 10px;">
+        <span style="color:var(--correct)">■</span> Answered 
+        <span style="color:var(--wrong)">■</span> Not Answered<br>
+        <span style="color:var(--review)">■</span> Marked
+        <span style="color:#e9ecef">■</span> Not Visited
+      </div>
+      <div class="palette-grid" id="palette"></div>
+      <button onclick="submitQuiz()" style="margin-top: 20px; width:100%; background:var(--primary); color:white; padding:10px; border:none; border-radius:5px; cursor:pointer;">SUBMIT TEST</button>
+    </div>
+  </div>
+
+  <div class="container" id="result-screen" style="display:none; flex-direction:column; overflow-y:auto; background:var(--panel-bg);">
+    <h2 style="text-align:center;">Result Analysis - AIR Prediction</h2>
+    <div style="display:flex; justify-content:space-around; flex-wrap:wrap; margin: 20px 0;">
+      <div class="chart-container"><canvas id="pieChart"></canvas></div>
+      <div class="chart-container"><canvas id="barChart"></canvas></div>
+    </div>
+    <div id="analysis-text" style="text-align:center; font-size:1.2em;"></div>
+    <div class="controls" style="justify-content:center;">
+      <button onclick="reviewMistakes()">Review Mistakes</button>
+      <button onclick="exportPDF()">Export PDF</button>
+      <button onclick="location.reload()">Retry Test</button>
+    </div>
+    <div id="review-area" style="margin-top: 30px;"></div>
+  </div>
+
+  <script src="questions.js"></script>
+  <script src="script.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+  </script>
 </body>
 </html>
