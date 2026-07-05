@@ -1,4 +1,4 @@
-// Application State
+// Application State 
 let currentQuestions = [];
 let currentIndex = 0;
 let userAnswers = {};
@@ -32,18 +32,18 @@ function startTest(selectedMode) {
     userAnswers = {};
     bookmarked.clear();
     markedForReview.clear();
-    
-    switchView('quiz-view');
-    generatePalette();
-    loadQuestion();
 
-    if (mode === 'mock') {
-        timeRemaining = currentQuestions.length * 60; // 1 min per question
-        startTimer();
-        document.getElementById('explanation-box').classList.add('hidden');
-    } else {
-        document.getElementById('timer').innerText = "Practice Mode";
-    }
+    switchView('quiz-view'); 
+    generatePalette(); 
+    loadQuestion(); 
+    
+    if (mode === 'mock') { 
+        timeRemaining = currentQuestions.length * 60; // 1 min per question 
+        startTimer(); 
+        document.getElementById('explanation-box').classList.add('hidden'); 
+    } else { 
+        document.getElementById('timer').innerText = "Practice Mode"; 
+    } 
 }
 
 function switchView(viewId) {
@@ -75,51 +75,47 @@ function loadQuestion() {
     document.getElementById('q-number').innerText = `Question ${currentIndex + 1} of ${currentQuestions.length}`;
     document.getElementById('q-difficulty').innerText = q.difficulty;
     document.getElementById('question-text').innerHTML = q.question;
+
+    const optionsContainer = document.getElementById('options-container'); 
+    optionsContainer.innerHTML = ''; 
     
-    const optionsContainer = document.getElementById('options-container');
-    optionsContainer.innerHTML = '';
+    for (let key in q.options) { 
+        const div = document.createElement('div'); 
+        div.className = 'option'; 
+        div.innerHTML = `<strong>${key}.</strong> ${q.options[key]}`; 
+        if (userAnswers[q.id] === key) { 
+            div.classList.add('selected'); 
+        } 
+        if (mode === 'practice' && userAnswers[q.id]) { 
+            if (key === q.correctOption) div.classList.add('correct'); 
+            else if (userAnswers[q.id] === key) div.classList.add('wrong'); 
+            div.style.pointerEvents = 'none'; 
+        } 
+        div.onclick = (event) => selectOption(key, event); 
+        optionsContainer.appendChild(div); 
+    } 
     
-    for (let key in q.options) {
-        const div = document.createElement('div');
-        div.className = 'option';
-        div.innerHTML = `<strong>${key}.</strong> ${q.options[key]}`;
-        
-        if (userAnswers[q.id] === key) {
-            div.classList.add('selected');
-        }
-
-        if (mode === 'practice' && userAnswers[q.id]) {
-            if (key === q.correctOption) div.classList.add('correct');
-            else if (userAnswers[q.id] === key) div.classList.add('wrong');
-            div.style.pointerEvents = 'none';
-        }
-
-        div.onclick = () => selectOption(key);
-        optionsContainer.appendChild(div);
-    }
-
-    if (mode === 'practice' && userAnswers[q.id]) {
-        showExplanation(q);
-    } else {
-        document.getElementById('explanation-box').classList.add('hidden');
-    }
-
-    updateNavigation();
-    updatePalette();
+    if (mode === 'practice' && userAnswers[q.id]) { 
+        showExplanation(q); 
+    } else { 
+        document.getElementById('explanation-box').classList.add('hidden'); 
+    } 
+    
+    updateNavigation(); 
+    updatePalette(); 
 }
 
-function selectOption(key) {
+function selectOption(key, event) {
     if (mode === 'practice' && userAnswers[currentQuestions[currentIndex].id]) return;
-    
-    const qId = currentQuestions[currentIndex].id;
-    userAnswers[qId] = key;
-    
-    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
-    event.currentTarget.classList.add('selected');
 
-    if (mode === 'practice') {
-        loadQuestion(); // Reloads to show colors and explanation
-    }
+    const qId = currentQuestions[currentIndex].id; 
+    userAnswers[qId] = key; 
+    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected')); 
+    event.currentTarget.classList.add('selected'); 
+    
+    if (mode === 'practice') { 
+        loadQuestion(); // Reloads to show colors and explanation 
+    } 
 }
 
 function showExplanation(q) {
@@ -227,35 +223,35 @@ function calculateResults() {
     let unattempted = 0;
     let topics = {};
 
-    currentQuestions.forEach(q => {
-        if (!topics[q.topic]) topics[q.topic] = { total: 0, correct: 0 };
-        topics[q.topic].total++;
-
-        if (userAnswers[q.id] === q.correctOption) {
-            score += 4;
-            correct++;
-            topics[q.topic].correct++;
-        } else if (userAnswers[q.id] && userAnswers[q.id] !== null) {
-            score -= 1;
-            incorrect++;
-        } else {
-            unattempted++;
-        }
-    });
-
-    const maxScore = currentQuestions.length * 4;
-    document.getElementById('total-score').innerText = score;
-    document.getElementById('max-score').innerText = maxScore;
+    currentQuestions.forEach(q => { 
+        if (!topics[q.topic]) topics[q.topic] = { total: 0, correct: 0 }; 
+        topics[q.topic].total++; 
+        
+        if (userAnswers[q.id] === q.correctOption) { 
+            score += 4; 
+            correct++; 
+            topics[q.topic].correct++; 
+        } else if (userAnswers[q.id] && userAnswers[q.id] !== null) { 
+            score -= 1; 
+            incorrect++; 
+        } else { 
+            unattempted++; 
+        } 
+    }); 
     
-    // AIR prediction based on percentage
-    const percent = (score / maxScore) * 100;
-    let air = "> 1,00,000";
-    if(percent > 95) air = "1 - 500";
-    else if(percent > 85) air = "500 - 5,000";
-    else if(percent > 70) air = "5,000 - 25,000";
-    document.getElementById('air-pred').innerText = air;
-
-    renderCharts(correct, incorrect, unattempted, topics);
+    const maxScore = currentQuestions.length * 4; 
+    document.getElementById('total-score').innerText = score; 
+    document.getElementById('max-score').innerText = maxScore; 
+    
+    // AIR prediction based on percentage 
+    const percent = (score / maxScore) * 100; 
+    let air = "> 1,00,000"; 
+    if(percent > 95) air = "1 - 500"; 
+    else if(percent > 85) air = "500 - 5,000"; 
+    else if(percent > 70) air = "5,000 - 25,000"; 
+    
+    document.getElementById('air-pred').innerText = air; 
+    renderCharts(correct, incorrect, unattempted, topics); 
 }
 
 function renderCharts(correct, incorrect, unattempted, topics) {
@@ -272,22 +268,22 @@ function renderCharts(correct, incorrect, unattempted, topics) {
         options: { plugins: { title: { display: true, text: 'Accuracy Breakdown' } } }
     });
 
-    const topicCtx = document.getElementById('topicChart').getContext('2d');
-    const topicLabels = Object.keys(topics);
-    const topicData = topicLabels.map(t => (topics[t].correct / topics[t].total) * 100);
+    const topicCtx = document.getElementById('topicChart').getContext('2d'); 
+    const topicLabels = Object.keys(topics); 
+    const topicData = topicLabels.map(t => (topics[t].correct / topics[t].total) * 100); 
     
-    new Chart(topicCtx, {
-        type: 'bar',
-        data: {
-            labels: topicLabels,
-            datasets: [{
-                label: 'Accuracy % by Topic',
-                data: topicData,
-                backgroundColor: '#007bff'
-            }]
-        },
-        options: { scales: { y: { beginAtZero: true, max: 100 } } }
-    });
+    new Chart(topicCtx, { 
+        type: 'bar', 
+        data: { 
+            labels: topicLabels, 
+            datasets: [{ 
+                label: 'Accuracy % by Topic', 
+                data: topicData, 
+                backgroundColor: '#007bff' 
+            }] 
+        }, 
+        options: { scales: { y: { beginAtZero: true, max: 100 } } } 
+    }); 
 }
 
 function retryWrong() {
@@ -311,20 +307,20 @@ function exportPDF() {
 function exportCSV() {
     let csvContent = "data:text/csv;charset=utf-8,";
     csvContent += "Question ID,Topic,Difficulty,Your Answer,Correct Answer,Status\n";
-    
-    currentQuestions.forEach(q => {
-        let uAns = userAnswers[q.id] || "Skipped";
-        let status = (uAns === q.correctOption) ? "Correct" : (uAns === "Skipped" ? "Skipped" : "Wrong");
-        csvContent += `${q.id},"${q.topic}",${q.difficulty},${uAns},${q.correctOption},${status}\n`;
-    });
 
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "NEET_Report.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    currentQuestions.forEach(q => { 
+        let uAns = userAnswers[q.id] || "Skipped"; 
+        let status = (uAns === q.correctOption) ? "Correct" : (uAns === "Skipped" ? "Skipped" : "Wrong"); 
+        csvContent += `${q.id},"${q.topic}",${q.difficulty},${uAns},${q.correctOption},${status}\n`; 
+    }); 
+    
+    const encodedUri = encodeURI(csvContent); 
+    const link = document.createElement("a"); 
+    link.setAttribute("href", encodedUri); 
+    link.setAttribute("download", "NEET_Report.csv"); 
+    document.body.appendChild(link); 
+    link.click(); 
+    document.body.removeChild(link); 
 }
 
 // PWA Installation Logic

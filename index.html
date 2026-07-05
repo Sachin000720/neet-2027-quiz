@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,21 +17,19 @@
             <button id="submit-quiz-btn" class="danger-btn">Submit Test</button>
         </div>
     </header>
-
     <main id="app-container">
         <section id="dashboard-view" class="view active">
             <h1>Class 11: Some Basic Concepts of Chemistry</h1>
             <h2>Topic: Development & Importance of Chemistry</h2>
             <div class="test-options">
-                <button onclick="startTest('practice')">Practice Mode</button>
-                <button onclick="startTest('mock')">Mock Test (Timed)</button>
+                <button onclick="startTest('practice')" class="primary-btn">Practice Mode</button>
+                <button onclick="startTest('mock')" class="primary-btn">Mock Test (Timed)</button>
             </div>
             <div id="install-banner" class="hidden">
                 <p>Install this app for offline use</p>
                 <button id="install-btn">Install PWA</button>
             </div>
         </section>
-
         <section id="quiz-view" class="view">
             <div class="quiz-layout">
                 <div class="question-area">
@@ -45,7 +43,6 @@
                     </div>
                     <div id="question-text" class="question-text"></div>
                     <div id="options-container" class="options-grid"></div>
-                    
                     <div id="explanation-box" class="explanation-box hidden">
                         <h3>Detailed Analysis</h3>
                         <p><strong>Correct Answer:</strong> <span id="exp-correct"></span></p>
@@ -56,14 +53,12 @@
                         <p><strong>Common Mistake:</strong> <span id="exp-mistake"></span></p>
                         <p class="stats">PYQ Sim: <span id="exp-pyq"></span> | NEET Prob: <span id="exp-prob"></span></p>
                     </div>
-
                     <div class="navigation-buttons">
                         <button id="prev-btn">Previous</button>
                         <button id="skip-btn">Skip</button>
                         <button id="next-btn" class="primary-btn">Save & Next</button>
                     </div>
                 </div>
-                
                 <div class="palette-area">
                     <h3>Question Palette</h3>
                     <div class="palette-stats">
@@ -75,7 +70,6 @@
                 </div>
             </div>
         </section>
-
         <section id="results-view" class="view">
             <h1>Test Analysis Report</h1>
             <div class="results-summary">
@@ -85,17 +79,15 @@
                     <p>Predicted AIR Rank: <strong id="air-pred"></strong></p>
                 </div>
             </div>
-            
             <div class="charts-container">
                 <div class="chart-box"><canvas id="accuracyChart"></canvas></div>
                 <div class="chart-box"><canvas id="topicChart"></canvas></div>
             </div>
-
             <div class="actions center">
-                <button onclick="exportPDF()">Export PDF Report</button>
-                <button onclick="exportCSV()">Export CSV</button>
-                <button onclick="retryWrong()">Retry Wrong Questions</button>
-                <button onclick="location.reload()">Return Home</button>
+                <button onclick="exportPDF()" class="primary-btn">Export PDF Report</button>
+                <button onclick="exportCSV()" class="primary-btn">Export CSV</button>
+                <button onclick="retryWrong()" class="primary-btn">Retry Wrong Questions</button>
+                <button onclick="location.reload()" class="primary-btn">Return Home</button>
             </div>
         </section>
     </main>
